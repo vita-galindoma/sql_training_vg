@@ -53,11 +53,11 @@ describe("Update Statements", () => {
         } catch (e) { console.log(e); };
 
         const rows = await db.selectMultipleRows(selectColumnFromTable("title", CATEGORIES));
-        // for (const row of rows) {
-        //     if (row.title !== row.title.toUpperCase()) {
-        //         throw new Error(`Title '${row.title}' is not in upper case!`)
-        //     };
-        // };
+        for (const row of rows) {
+            if (row.title !== row.title.toUpperCase()) {
+                throw new Error(`Title '${row.title}' is not in upper case!`)
+            };
+        };
         done();
     }, minutes(1));
 });

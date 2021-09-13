@@ -58,7 +58,6 @@ describe("Foreign Keys", () => {
         const query = `DELETE FROM ${APPS_CATEGORIES} WHERE app_id = ${appId};
         DELETE FROM ${APPS_PRICING_PLANS} WHERE app_id = ${appId};
         DELETE FROM ${APPS} WHERE id = ${appId}`;
-        // const query = `DELETE FROM ${APPS} WHERE id = ${appId}`;
         try {
             await db.delete(query);
           } catch (e) {}

@@ -1,4 +1,4 @@
-import { APPS, APPS_CATEGORIES, CATEGORIES, REVIEWS } from "../shopify-table-names";
+import {CATEGORIES, REVIEWS } from "../shopify-table-names";
 
 export const selectCount = (table: string): string => {
   return `select count(*) as c from '${table}'`;
@@ -30,6 +30,6 @@ export const selectReviewByAppIdAuthor = (appId: number, author: string): string
 };
 
 export const selectColumnFromTable = (columnName: string, tableName: string): string => {
-  return `select '${columnName}' from '${tableName}'`;
+  return `select ${columnName} from ${tableName}`;
 };
 
