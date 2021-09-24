@@ -11,25 +11,81 @@ import {
 } from "../src/shopify-table-names";
 import { tableInfo, indexList } from "../src/queries/table-info";
 
-const CREATE_APPS_TABLE = `todo`;
+const CREATE_APPS_TABLE = `CREATE TABLE ${APPS} (
+    id integer not null PRIMARY KEY,
+    url text not null,
+    title text not null,
+    tagline text not null, 
+    developer text not null,
+    developer_link text not null, 
+    icon text not null, 
+    rating real not null, 
+    reviews_count integer not null, 
+    description text not null,
+    pricing_hint text 
+  )`;
 
-const CREATE_CATEGORIES_TABLE = `todo`;
+const CREATE_CATEGORIES_TABLE = `CREATE TABLE ${CATEGORIES} (
+    id integer not null PRIMARY KEY,
+    title text not null
+    )`;
 
-const CREATE_APPS_CATEGORIES_TABLE = `todo`;
+const CREATE_APPS_CATEGORIES_TABLE = `CREATE TABLE ${APPS_CATEGORIES} (
+    app_id integer not null,
+    category_id integer not null,
+    PRIMARY KEY(app_id, category_id)
+    CONSTRAINT fk_apps 
+        FOREIGN KEY (app_id)
+        REFERENCES ${APPS} (id)
+    CONSTRAINT fk_categories 
+        FOREIGN KEY (category_id)
+        REFERENCES ${CATEGORIES} (id)
+    )`;
 
-const CREATE_KEY_BENEFITS_TABLE = `todo`;
+const CREATE_KEY_BENEFITS_TABLE = `CREATE TABLE ${KEY_BENEFITS} (
+    app_id integer not null,
+    title text not null,
+    description text not null,
+    PRIMARY KEY(app_id, title)
+    )`;
 
-const CREATE_PRICING_PLANS_TABLE = `todo`;
+const CREATE_PRICING_PLANS_TABLE = `CREATE TABLE ${PRICING_PLANS} (
+    id integer not null PRIMARY KEY,
+    price text not null
+    )`;
 
-const CREATE_APPS_PRICING_PLANS_TABLE = `todo`;
+const CREATE_APPS_PRICING_PLANS_TABLE = `CREATE TABLE ${APPS_PRICING_PLANS} (
+    app_id integer not null,
+    pricing_plan_id integer not null,
+    PRIMARY KEY(app_id, pricing_plan_id)
+    CONSTRAINT fk_apps 
+        FOREIGN KEY (app_id)
+        REFERENCES ${APPS} (id)  
+    CONSTRAINT fk_pricing 
+        FOREIGN KEY (pricing_plan_id)
+        REFERENCES ${PRICING_PLANS} (id)  
+    )`;
+   
 
-const CREATE_REVIEWS_TABLE = `todo`;
+const CREATE_REVIEWS_TABLE = `CREATE TABLE ${REVIEWS} (
+    app_id integer not null,
+    author text not null,
+    body text not null,
+    rating integer not null,
+    helpful_count integer not null,
+    date_created text not null,
+    developer_reply text,
+    developer_reply_date text
+    )`;
 
-const CREATE_INDEX_REVIEWS_AUTHOR = `todo`;
+const CREATE_INDEX_REVIEWS_AUTHOR = `CREATE INDEX reviews_author_idx
+ON ${REVIEWS} (author);`;
 
-const CREATE_INDEX_PRICING_PLANS_PRICE = `todo`;
+const CREATE_INDEX_PRICING_PLANS_PRICE = `CREATE INDEX pricing_plans_price_idx
+ON ${PRICING_PLANS} (price);`;
 
-const CREATE_UNIQUE_INDEX_APPS_ID = `todo`;
+const CREATE_UNIQUE_INDEX_APPS_ID = `CREATE UNIQUE INDEX apps_id_unq_idx
+ON ${APPS} (id);`;
 
 describe("Create Tables", () => {
     let db: Database;
@@ -122,7 +178,7 @@ describe("Create Tables", () => {
             { name: "app_id", type: "integer" },
             { name: "pricing_plan_id", type: "integer" }
         ]);
-
+        
         const reviews = (await selectTableInfo(REVIEWS)).map(mapFn);
         expect(reviews).toEqual([
             { name: "app_id", type: "integer" },
@@ -289,7 +345,7 @@ describe("Create Tables", () => {
         await db.createIndex(CREATE_INDEX_REVIEWS_AUTHOR);
         const reviews = (await selectIndexList(REVIEWS)).map(mapFn);
         expect(reviews).toEqual([
-            { name: "reviews_author_idx", unique: false },
+            { name: "reviews_author_idx", unique: false }
             //{ name: "sqlite_autoindex_reviews_1", unique: true }
         ]);
         done();
